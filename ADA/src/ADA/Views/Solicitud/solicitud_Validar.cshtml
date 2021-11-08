@@ -1,0 +1,961 @@
+@model IEnumerable<ADA.Models.Entities.TB_OPPLUS_SOLICITUD>
+
+@{
+    ViewData["Title"] = "solicitud_Validar";
+}
+
+<link href="~/datatable/datatables.min.css" rel="stylesheet" />
+<script src="~/datatable/datatables.min.js"></script>
+
+<style>
+    table tbody tr td {
+        font-size: 11.5px;
+    }
+</style>
+
+<style>
+    table thead {
+        font-size: 11.5px;
+    }
+</style>
+
+
+
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $('#example').DataTable({
+            dom: 'Bfrtip',
+            "paging": false,
+
+            "info": false,
+            buttons: [
+                'copy',
+                'excelHtml5',
+                'csvHtml5'
+            ]
+        });
+
+        fecha = $('#txtFecha').val().replace(/\-/g, '');
+        console.log(fecha);
+        $('#txtNombre').text('ABONOS' + fecha);
+
+    });
+
+    function FunTrans() {
+
+        var tra = $('#selTrans').val();
+        console.log(tra);
+
+    }
+
+    function FunFecha() {
+
+        fecha = $('#txtFecha').val().replace(/\-/g, '');
+        console.log(fecha);
+        $('#txtNombre').text('ABONOS' + fecha);
+
+
+    }
+
+    function Subir() {
+
+
+        var fec = $('#txtFecha').val();
+        var tra = $('#selTrans').val();
+
+        fecha = $('#txtFecha').val().replace(/\-/g, '');
+
+        console.log(tra);
+
+        var nom = 'ABONOS' + fecha;
+
+        var url = "/Clientes/fnSubirAbonos";
+        $.get(url, { vNombre: nom, vFecha: fec, vTrans: tra }, function (data2) {
+
+            if (data2 == 'OK') {
+
+                $('#altConfirma').show();
+            } else {
+
+                alert("Error al subir el archivo.");
+            }
+
+        });
+    };
+
+
+
+    var tableToExcel = (function () {
+        var uri = 'data:application/vnd.ms-excel;base64,'
+          , template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>'
+          , base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) }
+          , format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) }
+        return function (table, name) {
+            if (!table.nodeType) table = document.getElementById(table)
+            var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+            window.location.href = uri + base64(format(template, ctx))
+        }
+    })()
+
+
+
+
+</script>
+
+<script>
+
+    //window.onload = function popitup(url, windowName) {
+    //    newwindow = window.open("http://localhost:5000/Solicitud/solicitud_Lista", windowName, 'height=800,width=600');
+    //    if (window.) {
+    //        newwindow.focus()
+    //        return false;
+    //    }
+    //    return false;
+
+    //}
+
+
+</script>
+
+
+<form asp-action="solicitud_Validar" method="get">
+
+    <div class="block-header">
+        <div class="row">
+            <div class="col-lg-5 col-md-5 col-sm-12">
+                <h2>
+                    @ViewBag.Trans
+                    <small>@ViewBag.Tipo</small>
+                </h2>
+            </div>
+            <div class="col-lg-7 col-md-7 col-sm-12 text-right">
+                <ul class="breadcrumb float-md-right">
+                    <li class="breadcrumb-item"><a href="index.html"><i class="zmdi zmdi-home"></i>Cibergestion</a></li>
+                    <li class="breadcrumb-item active">Solicitud</li>
+
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="body">
+
+
+            <div class="tab-content">
+
+                <div role="tabpanel" class="tab-pane active" id="home" aria-expanded="false">
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="header">
+
+                                    <h2><strong>Opplus</strong> Validar <small></small></h2>
+                                    <div class="row clearfix">
+                         
+
+                                        <br />
+
+                                        <div class="col-lg-2 col-md-12">
+                                            <div class="form-group">
+                                                @{
+                                                    string desde = ViewBag.Fecha_Ini;
+
+                                                    if (desde.Equals("0001-01-01"))
+                                                    {
+                                                        desde = DateTime.Today.ToString("yyyy-MM-dd");
+                                                    }
+                                                }
+
+                                                <input type="date" class="form-control" name="Fecha_Ini" value="@desde">
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-lg-2 col-md-12">
+                                            <div class="form-group">
+                                                @{
+                                                    string hasta = ViewBag.Fecha_Fin;
+
+                                                    if (hasta.Equals("0001-01-01"))
+                                                    {
+                                                        hasta = DateTime.Today.ToString("yyyy-MM-dd");
+                                                    }
+                                                }
+
+                                                <input type="date" class="form-control" name="Fecha_Fin" value="@hasta">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-2 col-md-12">
+                                            <div class="form-group">
+
+                                                <input type="text" class="form-control" name="dni" placeholder="Ingrese DNI">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-3 col-md-12">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" name="nombres" placeholder="Ingrese Nombres o Apellidos">
+                                            </div>
+                                        </div>
+
+
+
+
+                                        <div class="col-lg-2 col-md-12">
+                                            <div class="form-group">
+
+                                                @{
+                                                    var search = 'B';
+
+                                                }
+
+                                                <button type="submit" value="@search" name="accion" class="btn btn-raised btn-round btn-info">Buscar</button>
+
+
+                                            </div>
+
+
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+
+                            <div class="card">
+
+                                <div class="header">
+
+
+                                    <ul class="header-dropdown">
+                                        <li class="dropdown">
+                                            <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                <strong> Descargar </strong> <i class="zmdi zmdi-more"></i>
+                                            </a>
+                                            <ul class="dropdown-menu dropdown-menu-right slideUp">
+                                                <li> <a onclick="tableToExcel('example02', 'Lista de Solicitudes')" style="cursor:pointer">Exportar Excel</a>  </li>
+                                            </ul>
+                                        </li>
+
+                                    </ul>
+                                    <br />
+
+                                    <h2><strong>Resultados</strong> de la busqueda <small></small></h2>
+                                    <div role="tabpanel" class="tab-pane" id="messages2">
+                                        <div class="table-responsive" style="height:390px;">
+
+                                            <table class="table table-hover m-b-0" id="example">
+                                                @{int con = 0;}
+                                                <thead>
+                                                    <tr>
+                                                        <th>#</th>
+                                                        <th>
+                                                            Solicitud
+                                                        </th>
+
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.CODIGO)
+                                                        </th>
+
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.ESTADO_VALIDAR)
+                                                        </th>
+
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.ESTADO_SOLICITUD)
+                                                        </th>                                                        
+
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.NUM_CREDITO)
+                                                        </th>
+
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.FECHA_SOLICITUD_CLIENTE)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.FECHA_RECEPCION_CYBER)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.TIPO_DOCUMENTO)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.NUMERO_DOCUMENTO)
+                                                        </th>
+                                                        <th style="text-align:center">
+                                                            @Html.DisplayNameFor(model => model.NOMBRES)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.APELLIDO_PATERNO)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.APELLIDO_MATERNO)
+                                                        </th>
+
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.DESTINO_CREDITO)
+                                                        </th>
+
+
+                                                        <th style="text-align:center">
+                                                            @Html.DisplayNameFor(model => model.MODALIDAD)
+                                                        </th>
+
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.AFP)
+                                                        </th>
+
+
+
+                                                        @*<th>
+                                                                @Html.DisplayNameFor(model => model.FECHA_OBSERVACION)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.FECHA_GESTION)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.FECHA_ASIGNACION)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.FECHA_DICTAMEN)
+                                                            </th>
+
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.AFP_125)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.MONEDA)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.VALOR_INMUEBLE)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.MONEDA_INMUEBLE)
+                                                            </th>
+
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.FECHA_COMUNICACION)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.ESTADO_VALIDAR)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.OBSER)
+                                                            </th>
+                                                            <th>
+                                                                @Html.DisplayNameFor(model => model.PRODUCTO)
+                                                            </th>*@
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in Model)
+                                                    {
+                                                        con = @con + 1;
+                                                        <tr>
+                                                            <td style="text-align:center">@con</td>
+
+
+                                                            <td style="text-align:center">
+                                                                <a asp-action="solicitud_Editar_valid" asp-route-codigo="@item.CODIGO">Revisar</a>
+                                                            </td>
+
+                                                            <td style="text-align:center">@item.CODIGO</td>
+
+
+                                                            <td style="text-align:center">
+                                                                <STRONG>@Html.DisplayFor(modelItem => item.ESTADO_VALIDAR)</STRONG>
+                                                            </td>
+
+                                                            <td style="text-align:center">
+                                                                @if (item.ESTADO_SOLICITUD == "100")
+                                                                {
+                                                                    <span class="label-default">PENDIENTE</span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "101")
+                                                                {
+                                                                    <span class="label-warning">IMPROCEDENTE</span>
+                                                                }
+
+                                                                else if (item.ESTADO_SOLICITUD == "102")
+                                                                {
+                                                                    <span class="label-info">DUDA</span>
+                                                                }
+
+                                                                else if (item.ESTADO_SOLICITUD == "103")
+                                                                {
+                                                                    <span class="label-primary">PRE-CONFORMIDAD</span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "104")
+                                                                {
+                                                                    <span class="label-primary">PENDIENTE</span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "105")
+                                                                {
+                                                                    <span class="label-primary">DEVUELTO OPPLUS</span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "106")
+                                                                {
+                                                                    <span class="label-primary">DESESTIMADO</span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "107")
+                                                                {
+                                                                    <span class="label-primary">ASIGNADO A ABOGADO</span>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                }
+                                                            </td>
+                                                       
+
+
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.NUM_CREDITO)
+                                                            </td>
+
+
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.FECHA_SOLICITUD_CLIENTE)
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.FECHA_RECEPCION_CYBER)
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.TIPO_DOCUMENTO)
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.NUMERO_DOCUMENTO)
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.NOMBRES)
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.APELLIDO_PATERNO)
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.APELLIDO_MATERNO)
+                                                            </td>
+                                                            <td style="text-align:center">
+                                                                @Html.DisplayFor(modelItem => item.DESTINO_CREDITO)
+                                                            </td>
+
+                                                            <td style="text-align:center">
+                                                                @if (item.MODALIDAD == "100")
+                                                                {
+                                                                    <span class="label-default"><strong>PRE-PAGO REDUCCION PLAZO</strong></span>
+                                                                }
+                                                                else if (item.MODALIDAD == "101")
+                                                                {
+                                                                    <span class="label-warning"><strong>PRE-PAGO REDUCCION MONTO CUOTA</strong></span>
+                                                                }
+
+                                                                else if (item.MODALIDAD == "102")
+                                                                {
+                                                                    <span class="label-info"><strong>ADELANTO DE CUOTA</strong></span>
+                                                                }
+
+                                                                else if (item.MODALIDAD == "103")
+                                                                {
+                                                                    <span class="label-primary"><strong>CANCELACION TOTAL</strong></span>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                }
+                                                            </td>
+
+
+
+                                                            <td style="text-align:center">
+                                                                @if (item.AFP == "100")
+                                                                {
+                                                                    <span class="label-default"><strong>AFP INTEGRA</strong></span>
+                                                                }
+                                                                else if (item.AFP == "101")
+                                                                {
+                                                                    <span class="label-warning"><strong>AFP HABITAT</strong></span>
+                                                                }
+
+                                                                else if (item.AFP == "102")
+                                                                {
+                                                                    <span class="label-info"><strong>AFP PRIMA</strong></span>
+                                                                }
+
+                                                                else if (item.AFP == "103")
+                                                                {
+                                                                    <span class="label-primary"><strong>PROFUTURO AFP</strong></span>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                }
+                                                            </td>
+
+
+
+                                                            @*<td>
+                                                                     @Html.DisplayFor(modelItem => item.FECHA_OBSERVACION)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.FECHA_GESTION)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.FECHA_ASIGNACION)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.FECHA_DICTAMEN)
+                                                                 </td>
+
+                                                                <td>
+                                                                     @Html.DisplayFor(modelItem => item.AFP_125)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.MONEDA)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.VALOR_INMUEBLE)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.MONEDA_INMUEBLE)
+                                                                 </td>
+
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.FECHA_COMUNICACION)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.ESTADO_VALIDAR)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.OBSER)
+                                                                 </td>
+                                                                 <td>
+                                                                     @Html.DisplayFor(modelItem => item.PRODUCTO)
+                                                                 </td>A*@
+
+
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+                                            <table class="table" id="example02" hidden>
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            CODIGO
+                                                        </th>
+                                                        <th>
+                                                            FECHA_SOLICITUD_CLIENTE
+                                                        </th>
+                                                        <th>
+                                                            FECHA_RECEPCION_CYBER
+                                                        </th>
+                                                        @*<th>
+                                                            @Html.DisplayNameFor(model => model.TIPO_DOCUMENTO)
+                                                        </th>*@
+                                                        <th>
+                                                            NUMERO_DOCUMENTO
+                                                        </th>
+                                                        <th>
+                                                            NOMBRES Y APELLIDOS
+                                                        </th>
+                                                        @*<th>
+                                                            @Html.DisplayNameFor(model => model.APELLIDO_PATERNO)
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.APELLIDO_MATERNO)
+                                                        </th>*@
+                                                        @*<th>
+                                                            @Html.DisplayNameFor(model => model.EMAIL)
+                                                        </th>*@
+                                                        <th>
+                                                           NUM_CREDITO
+                                                        </th>
+                                                        <th>
+                                                            DESTINO_CREDITO
+                                                        </th>
+                                                        <th>
+                                                            MODALIDAD
+                                                        </th>
+                                                        <th>
+                                                            NUM_OFICINA
+                                                        </th>
+                                                        @*<th>
+                                                                @Html.DisplayNameFor(model => model.PROVINCIA)
+                                                            </th>*@
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.AFP)
+                                                        </th>
+                                                        <th>
+                                                            SOLICITUD_COMPLETA
+                                                        </th>
+                                                        <th>
+                                                            ESTADO_CTA_AFP
+                                                        </th>
+                                                        <th>
+                                                            DNI
+                                                        </th>
+                                                        <th>
+                                                            CONSULTA_INDICES
+                                                        </th>
+                                                        @*<th>
+                        @Html.DisplayNameFor(model => model.INFORCORP)
+                    </th>*@
+                                                        <th>
+                                                           GESTOR
+                                                        </th>
+                                                        <th>
+                                                           MOTIVO_RECHAZO
+                                                        </th>
+                                                        <th>
+                                                           OBSERVACIONES_GESTOR
+                                                        </th>
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.FECHA_OBSERVACION)
+                                                        </th>
+                                                        @*<th>
+                        @Html.DisplayNameFor(model => model.NUM_PRESTAMO)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FECHA_GESTION)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FECHA_ASIGNACION)
+                    </th>*@
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.FECHA_DICTAMEN)
+                                                        </th>
+                                                        @*<th>
+                        @Html.DisplayNameFor(model => model.AFP_125)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.MONEDA)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.VALOR_INMUEBLE)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.MONEDA_INMUEBLE)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.DICTAMEN)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.ABOGADO)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.COMENTARIO_ABOGADO)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.LUGAR_PRECONFORMIDAD)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.GESTOR_CONTACTO)
+                    </th>
+                    <th>
+                        @Html.DisplayNameFor(model => model.FECHA_ENVIO_AFP)
+                    </th>*@
+                                                        <th>
+                                                            @Html.DisplayNameFor(model => model.ESTADO_SOLICITUD)
+                                                        </th>
+                                                        @*<th>
+                        ESTADO
+                    </th>*@
+                                                        @*<th>
+                        @Html.DisplayNameFor(model => model.OBSER)
+                    </th>*@
+                                                        <th>
+                                                           FECHA DOCUMENTACION COMPLETA
+                                                        </th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var item in @ViewBag.SolitudCyber)
+                                                    {
+                                                        var cred = "C-";
+
+                                                        <tr>
+                                                            <td>
+                                                                @item.CODIGO
+                                                            </td>
+                                                            <td>
+                                                                @item.FECHA_SOLICITUD_CLIENTE
+                                                            </td>
+                                                            <td>
+                                                                @item.FECHA_RECEPCION_CYBER
+                                                            </td>
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.TIPO_DOCUMENTO)
+                        </td>*@
+                                                            <td>
+
+                                                                @item.NUMERO_DOCUMENTO
+                                                            </td>
+                                                            <td>
+                                                                @item.NOMBRES @item.APELLIDO_PATERNO @item.APELLIDO_MATERNO
+                                                            </td>
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.APELLIDO_PATERNO)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.APELLIDO_MATERNO)
+                        </td>*@
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.EMAIL)
+                        </td>*@
+                                                            <td>
+                                                                @cred@item.NUM_CREDITO
+                                                            </td>
+                                                            <td>
+                                                                @item.DESTINO_CREDITO
+                                                            </td>
+                                                            <td>
+                                                                @if (item.MODALIDAD == "100")
+                                                                {
+                                                                    <span class="label-default"><strong>PRE-PAGO REDUCCION PLAZO</strong></span>
+                                                                }
+                                                                else if (item.MODALIDAD == "101")
+                                                                {
+                                                                    <span class="label-warning"><strong>PRE-PAGO REDUCCION MONTO CUOTA</strong></span>
+                                                                }
+
+                                                                else if (item.MODALIDAD == "102")
+                                                                {
+                                                                    <span class="label-info"><strong>ADELANTO DE CUOTA</strong></span>
+                                                                }
+
+                                                                else if (item.MODALIDAD == "103")
+                                                                {
+                                                                    <span class="label-primary"><strong>CANCELACION TOTAL</strong></span>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @item.NUM_OFICINA
+                                                            </td>
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.PROVINCIA)
+                        </td>*@
+                                                            <td>
+                                                                @if (item.AFP == "100")
+                                                                {
+                                                                    <span class="label-default"><strong>AFP INTEGRA</strong></span>
+                                                                }
+                                                                else if (item.AFP == "101")
+                                                                {
+                                                                    <span class="label-warning"><strong>AFP HABITAT</strong></span>
+                                                                }
+
+                                                                else if (item.AFP == "102")
+                                                                {
+                                                                    <span class="label-info"><strong>AFP PRIMA</strong></span>
+                                                                }
+
+                                                                else if (item.AFP == "103")
+                                                                {
+                                                                    <span class="label-primary"><strong>PROFUTURO AFP</strong></span>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                }
+                                                            </td>
+                                                            <td>
+                                                                @item.SOLICITUD_COMPLETA
+                                                            </td>
+                                                            <td>
+                                                                @item.ESTADO_CTA_AFP
+                                                            </td>
+                                                            <td>
+                                                                @item.DNI
+                                                            </td>
+                                                            <td>
+                                                                @item.CONSULTA_INDICES
+                                                            </td>
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.INFORCORP)
+                        </td>*@
+                                                            <td>
+                                                                @item.GESTOR
+                                                            </td>
+
+                                                            <td>
+                                                                @item.MOTIVO_RECHAZO
+                                                            </td>
+                                                            <td>
+                                                                @item.OBSERVACIONES_GESTOR
+                                                            </td>
+                                                            <td>
+                                                                @item.FECHA_OBSERVACION
+                                                            </td>
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.NUM_PRESTAMO)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FECHA_GESTION)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FECHA_ASIGNACION)
+                        </td>*@
+                                                            <td>
+                                                                @if (item.FECHA_OBSERVACION == Convert.ToDateTime("1/01/1900 00:00:00"))
+                                                                {
+
+                                                                }
+                                                                else
+                                                                {
+                                                                    @item.FECHA_DICTAMEN
+                                                                }
+
+                                                            </td>
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.AFP_125)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MONEDA)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.VALOR_INMUEBLE)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MONEDA_INMUEBLE)
+                        </td>
+                        <td>
+                                @Html.DisplayFor(modelItem => item.DICTAMEN)
+                            </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ABOGADO)
+                        </td>
+                        <td>
+                                @Html.DisplayFor(modelItem => item.COMENTARIO_ABOGADO)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LUGAR_PRECONFORMIDAD)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GESTOR_CONTACTO)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FECHA_ENVIO_AFP)
+                            </td>*@
+                                                            @*<td>
+                            @Html.DisplayFor(modelItem => item.ESTADO_SOLICITUD)
+                        </td>*@
+                                                            <td style="text-align:center">
+                                                                @if (item.ESTADO_SOLICITUD == "100")
+                                                                {
+                                                                    <span class="label-default"><strong>PENDIENTE</strong></span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "101")
+                                                                {
+                                                                    <span class="label-warning"><strong>IMPROCEDENTE</strong></span>
+                                                                }
+
+                                                                else if (item.ESTADO_SOLICITUD == "102")
+                                                                {
+                                                                    <span class="label-info"><strong>DUDA</strong></span>
+                                                                }
+
+                                                                else if (item.ESTADO_SOLICITUD == "103")
+                                                                {
+                                                                    <span class="label-primary"><strong>PRE-CONFORMIDAD</strong></span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "104")
+                                                                {
+                                                                    <span class="label-primary"><strong>OPPLUS</strong></span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "105")
+                                                                {
+                                                                    <span class="label-primary"><strong>DEVUELTO OPPLUS</strong></span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "106")
+                                                                {
+                                                                    <span class="label-primary"><strong>DESESTIMADO</strong></span>
+                                                                }
+                                                                else if (item.ESTADO_SOLICITUD == "107")
+                                                                {
+                                                                    <span class="label-primary"><strong>ASIGNADO A ABOGADO</strong></span>
+                                                                }
+                                                                else
+                                                                {
+
+                                                                }
+                                                            </td>
+                                                             @*<td>
+                                                                @Html.DisplayFor(modelItem => item.OBSER)
+                                                            </td>*@
+                                                            <td>
+                                                                @item.FECHA_DOCUMENTACIONC
+                                                            </td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div role="tabpanel" class="tab-pane" id="profile" aria-expanded="false">
+
+                    <div class="col-lg-12 col-md-4 col-sm-12">
+
+                        <div class="alert alert-success" id="altConfirma" role="alert" style="display:none;">
+                            <div class="container">
+                                <div class="alert-icon">
+                                    <i class="zmdi zmdi-thumb-up"></i>
+                                </div>
+                                <strong>Archivo ingresado.</strong>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">
+                                        <i class="zmdi zmdi-close"></i>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+
+
+
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</form>

@@ -1,0 +1,1208 @@
+@model ADA.Models.Entities.TB_CYBER_SOLICITUD
+
+@{
+    ViewData["Title"] = "solicitud_Crear";
+}
+
+<link href="~/datatable/datatables.min.css" rel="stylesheet" />
+<script src="~/datatable/datatables.min.js"></script>
+<!-- Favicon-->
+<link rel="stylesheet" href="~/assets/plugins/sweetalert/sweetalert.css" />
+<!-- Custom Css -->
+<link rel="stylesheet" href="~/assets/css/main.css">
+<link rel="stylesheet" href="~/assets/css/color_skins.css">
+<!-- SweetAlert Plugin Js -->
+<script src="~/assets/plugins/sweetalert/sweetalert.min.js"></script>
+<script src="~/assets/js/pages/ui/dialogs.js"></script>
+
+
+
+<style>
+    label {
+        font-size: 12px;
+        font-weight: 900;
+    }
+</style>
+
+
+<style>
+    label {
+        font-size: 10px;
+    }
+</style>
+
+
+<style>
+    table tbody tr td {
+        font-size: 11px;
+    }
+
+    table thead tr th {
+        font-size: 11px;
+    }
+</style>
+
+
+
+<script type="text/javascript">
+
+
+    $(document).ready(function () {
+        $('#example').DataTable({
+            dom: 'Bfrtip',
+            "paging": false,
+
+            "info": false,
+            buttons: [
+                'copy',
+                'excelHtml5',
+                'csvHtml5'
+            ]
+        });
+    });
+
+
+
+</script>
+
+
+<script type="text/javascript">
+
+    function Fun_Terri(vTer, vCod, vNombre) {
+
+        var cabecera = "";
+        $('#tbOficina2').remove();
+
+        $(".vTerritorio tr").each(function () {
+
+
+
+            var x = $(this).attr('id');
+            // console.log(x);
+            $('#' + x).removeClass("bg-blue");
+
+
+        });
+
+        $('#' + vTer).addClass("bg-blue");
+
+        $("#inPROVINCIA").val(vCod);       
+        $("#inPROVINCIAname").val(vNombre);
+        console.log(vNombre);       
+
+        var url = "/Solicitud/ListOficina";
+        $.get(url, {
+            cod: vCod
+        }, function (data) {
+
+            var vContOf = 0;
+            var vc = "Ofi-" + vContOf;
+            
+            data.forEach(function (element) {
+                vContOf = vContOf + 1;
+                vc = "Ofi-" + vContOf;
+            
+                //console.log(element);
+                //console.log(element.codigo);
+                cabecera = cabecera + '<tr id="' + element.coD_OFIC + '"onclick="Fun_Ofi(' + element.coD_OFIC + ');" style="cursor:pointer" >';
+                cabecera = cabecera + '<td>' + element.coD_OFIC + '</td>';
+                cabecera = cabecera + '<td>' + element.oficina + '</td>';
+                cabecera = cabecera + '</tr>';
+
+                //console.log(element.oficina);
+                //console.log(cabecera);
+
+            });
+
+            $('#tbOficina').append(' <tbody id="tbOficina2"  class="vOficna" >' + cabecera + ' </tbody>').fadeIn(300000);//.innerHTML();
+
+
+        });
+
+
+
+
+
+
+    };
+
+
+    function Fun_Ofi(vCod) {
+        console.log("--------------");
+        //console.log(vOf);
+        $(".vOficna tr").each(function () {
+
+            var x = $(this).attr('id');
+          
+            $('#' + x).removeClass("bg-blue");
+
+            //console.log(x);
+
+
+        });
+
+        $('#' + vCod).addClass("bg-blue");
+       
+
+        $("#inNUM_OFICINA").val(vCod);
+
+       
+        //$("#inNUM_OFICINAname").val(vOf);
+
+
+
+    };
+
+
+
+    function Fun_Oficna(vTer, vCod) {
+
+
+        $('#' + vTer).addClass("bg-blue");
+    }
+
+</script>
+
+<link href="~/assets/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet">
+
+
+<script type="text/javascript">
+
+    function concatena() {
+
+        var numCredito = $('#numCredito').val();
+
+        if ($("#numCredito").val().length < 18) {
+
+            $("#numCredito").val("");
+            alert("El Nro de Credito debe tener 18 digitos");
+            return;
+        }
+        //if ($("#numCredito").val().length = 18) {
+
+        //    $("#numCredito").attr('maxlength', '20');
+        //    console.log("si");
+
+        //    console.log(numCredito);
+        //    var first = numCredito.substr(0, 4);
+        //    console.log(first);
+        //    var second = numCredito.substr(4, 4);
+        //    console.log(second);
+        //    var third = numCredito.substr(8, 18);
+        //    console.log(third);
+        //    console.log(first + '-' + second + '-' + third);
+
+        //    $('#numCredito').val(first + '-' + second + '-' + third);
+
+
+        //}
+
+
+        //credito = numCredito.replace(/\D/g, '');
+
+
+
+    }
+
+
+
+    function dniDuplicado() {
+        var largo = $("#dni").val().length
+        console.log(largo + " LARGO");
+
+        if ($("#dni").val().length < 8) {
+
+            $("#dni").val("");
+            alert("Para DNI: 8 Digitos, Para C.E: 11 Digitos");
+            return;
+        }
+
+        if ($("#tipoDocumento").val() == "04" && $("#dni").val().length < 9) {
+            $("#dni").val("");
+            alert("El C.E debe tener 11 Digitos");
+            return;
+        }
+
+        else {
+
+            var vDni = $('#dni').val();
+
+            var url = "/Solicitud/Duplicado";
+            var data = { "dni": vDni };
+            var dataType = "json";
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                success: function (response) {
+                    console.log(response);
+                    if (response >= 1) {
+                        $('#lblExiste').show();
+                        setTimeout(
+                        function () { $("#lblExiste").fadeOut(500); }, 3000)
+                    }
+                    else {
+                        $('#lblInexiste').show();
+                        setTimeout(
+                        function () { $("#lblInexiste").fadeOut(500); }, 3000)
+                    }
+                },
+                dataType: dataType
+            });
+
+        }
+
+    };
+
+
+    function longDoc() {
+
+        console.log("entro");      
+
+        if ($("#tipoDocumento").val() == "01") {
+
+            console.log("DNI");
+            $("#dni").attr('maxlength', '8');
+        }
+        if ($("#tipoDocumento").val() == "04") {
+
+            console.log("CARNET");
+            $("#dni").attr('maxlength', '9');
+
+            //$("#fecDocCompleta").attr('required', '');
+        }
+
+
+    };
+
+    function diasLab() {
+
+        var fechaDocSelected = $('#fechaDocumentacion').val();
+
+        var vFecHoy = new Date();
+        //var dd = String(vFecHoy.getDate()).padStart(2, '0');
+        //var mm = String(vFecHoy.getMonth() + 1).padStart(2, '0');
+        //var yyyy = vFecHoy.getFullYear();
+
+        //vFecHoy = dd + '/' + mm + '/' + yyyy;
+        console.log(vFecHoy);
+
+        var vFechaSelec = new Date(fechaDocSelected);
+        //var dd = String(vFechaSelec.getUTCDate()).padStart(2, '0');
+        //var mm = String(vFechaSelec.getMonth() + 1).padStart(2, '0');
+        //var yyyy = vFechaSelec.getFullYear();
+
+        //vFechaSelec = dd + '/' + mm + '/' + yyyy;
+        console.log(vFechaSelec + " fecha select");
+
+        //console.log(fechaDocSelected);
+
+        if (vFechaSelec > vFecHoy) {
+            alert("Por favor elija una fecha menor o igual a Hoy")
+            $('#fechaDocumentacion').val("");
+        }
+
+        var vFechEnd = new Date();
+        var dd = String(vFechEnd.getDate()).padStart(2, '0');
+        var mm = String(vFechEnd.getMonth() + 1).padStart(2, '0');
+        var yyyy = vFechEnd.getFullYear();
+
+        vFechEnd = dd + '/' + mm + '/' + yyyy;
+
+        var fechaPermitida = new Date('01-02-2017');
+        var DD = String(fechaPermitida.getDate()).padStart(2, '0');
+        var MM = String(fechaPermitida.getMonth() + 1).padStart(2, '0');
+        var YYYY = fechaPermitida.getFullYear();
+
+        fechaPermitida = DD + '/' + MM + '/' + YYYY;
+        //console.log(fechaPermitida + " fecha permitida");
+
+        if (fechaDocSelected >= fechaPermitida) {
+
+            var url = "/Solicitud/ExcluirSabDom";
+            var data = { startDate: fechaDocSelected, endDate: vFechEnd };
+            var dataType = "json";
+
+            $.ajax({
+                type: "POST",
+                url: url,
+                data: data,
+                success: function (response) {
+                    //console.log(response);
+                    if (response <= 4) {
+
+                        //console.log("menor o igual a 4");
+                        $('#lblFechaOk').show();
+                        setTimeout(
+                        function () { $("#lblFechaOk").fadeOut(500); }, 3000)
+                    }
+                    else {
+                        console.log("mayor o igual a 4");
+                        $('#lblFechaError').show();
+                        setTimeout(
+                        function () { $("#lblFechaError").fadeOut(500); }, 3000)
+                        $('#fechaDocumentacion').val("");
+
+                    }
+                },
+                dataType: dataType
+            });
+
+        } else {
+            alert("Ingrese una Fecha valida por favor");
+            $('#fechaDocumentacion').val("");
+
+        }
+
+
+    }
+
+    function soloHastaHoy() {
+
+        var fechaDocSelected = $('#fecDocCompleta').val();
+
+
+        var vFecHoy = new Date();
+        //var dd = String(vFecHoy.getDate()).padStart(2, '0');
+        //var mm = String(vFecHoy.getMonth() + 1).padStart(2, '0');
+        //var yyyy = vFecHoy.getFullYear();
+
+        //vFecHoy = dd + '/' + mm + '/' + yyyy;
+        //console.log(vFecHoy);
+
+
+        var vFecSelected = new Date(fechaDocSelected);
+        //var dd = String(vFecSelected.getDate()).padStart(2, '0');
+        //var mm = String(vFecSelected.getMonth() + 1).padStart(2, '0');
+        //var yyyy = vFecSelected.getFullYear();
+
+        //vFecSelected = dd + '/' + mm + '/' + yyyy;
+        //console.log(vFecSelected);
+
+
+        if (vFecSelected > vFecHoy) {
+            alert("Por favor elija una fecha menor o igual a Hoy")
+            $('#fecDocCompleta').val("");
+        }
+        else {
+
+        }
+
+
+    }
+
+    function fechaCyber() {
+
+        var fechaCySelected = $('#fecha_cyber').val();
+
+        var vFecCyber = new Date(fechaCySelected);
+        //var dd = String(vFecCyber.getUTCDate()).padStart(2, '0');
+        //var mm = String(vFecCyber.getMonth() + 1).padStart(2, '0');
+        //var yyyy = vFecCyber.getFullYear();
+
+        //vFecCyber = dd + '/' + mm + '/' + yyyy;
+        console.log(vFecCyber + " select");
+
+
+        var vFecHoy = new Date();
+        //var dd = String(vFecHoy.getDate()).padStart(2, '0');
+        //var mm = String(vFecHoy.getMonth() + 1).padStart(2, '0');
+        //var yyyy = vFecHoy.getFullYear();
+
+        //vFecHoy = dd + '/' + mm + '/' + yyyy;
+        console.log(vFecHoy);
+
+        if (vFecCyber > vFecHoy) {
+            alert("Por favor elija una fecha menor o igual a Hoy")
+            $('#fecha_cyber').val("");
+        }
+
+    }
+
+    function validateEmail(email) {
+        var re = /^(([^<>()[\]\\.,;:\s@@\"]+(\.[^<>()[\]\\.,;:\s@@\"]+)*)|(\".+\"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    function validate() {
+        var $result = $("#result");
+        var email = $("#email").val();
+
+
+        if (validateEmail(email)) {
+            $("#lblEmailOK").show();
+            setTimeout(
+                            function () { $("#lblEmailOK").fadeOut(1000); }, 3000)
+        }
+        else {
+            $("#lblEmailERROR").show();
+            setTimeout(
+                            function () { $("#lblEmailERROR").fadeOut(1000); }, 3000)
+        }
+        return false;
+    }
+
+    function DocComp() {
+        var opcion = $('#ComboFechaDoc').val();
+
+
+        if (opcion == "Si") {
+            $('#DOCFECHACOMPLETA').append(' <span id="validarFechaDoc" asp-validation-for="FECHA_DOCUMENTACIONC" class="text-danger" />')
+
+            $('#DOCFECHACOMPLETA').show();
+            //$("#fecDocCompleta").attr('required', '');
+
+            $('#DOCCOMPLETA').show();
+            $('#DOCCOMPLETA').append(' <span id="validarFechaDoc" asp-validation-for="FECHA_DOCUMENTACIONC" class="text-danger" />')
+        }
+        else {
+            $('#DOCFECHACOMPLETA').hide();
+            //$("#fecDocCompleta").removeAttr('required');
+
+            $('#DOCCOMPLETA').hide();
+            $('#validarFechaDoc').remove();
+        }
+
+    }
+
+    function onGrabar() {
+
+        var mensaje = '@ViewBag.MensajeExito';
+
+        console.log(mensaje);
+        //if (mensaje) {
+        //    $('#solicitudOK').show();
+        //    setTimeout(
+        //    function () { $("#solicitudOK").fadeOut(1000); }, 3000)
+        //}
+       
+    }
+
+
+</script>
+
+<div class="block-header">
+    <div class="row">
+        <div class="col-lg-5 col-md-5 col-sm-12">
+            <h2>
+                Main
+                <small>Solicitud </small>
+            </h2>
+        </div>
+        <div class="col-lg-7 col-md-7 col-sm-12 text-right">
+            <ul class="breadcrumb float-md-right">
+                <li class="breadcrumb-item"><a href="index.html"><i class="zmdi zmdi-home"></i>Main</a></li>
+                <li class="breadcrumb-item active">Solicitud</li>
+
+
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+<form asp-action="solicitud_Crear">
+
+
+    <div class="container-fluid">
+
+       
+
+        <div class="row clearfix">
+          
+
+            <div class="alert alert-success" role="alert" style="display:@ViewBag.MsjExito">
+                <div class="container">
+                    <div class="alert-icon">
+                        <i class="zmdi zmdi-thumb-up"></i>
+                    </div>
+                    <strong>LA SOLICITUD FUE GRABADA CORRECTAMENTE</strong> Por favor cierre este mensaje.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">
+                            <i class="zmdi zmdi-close"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="alert alert-danger" role="alert" style="display:@ViewBag.MessageError">
+                <div class="container">
+                    <div class="alert-icon">
+                        <i class="zmdi zmdi-block"></i>
+                    </div>
+                    <strong>NO SE PUDO GRABAR LA SOLICITUD</strong> Por favor revise los datos.
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">
+                            <i class="zmdi zmdi-close"></i>
+                        </span>
+                    </button>
+                </div>
+            </div>  
+
+
+
+            <div class="col-md-8">
+                    <div class="card" style="height:580px">
+
+                        <div class="header">
+                            <h2><strong>Solicitud</strong> Nueva <small></small></h2>
+
+
+
+                        </div>
+
+                        <div class="body">
+                            <div class="form-horizontal">
+
+                                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                <div class="form-group" hidden>
+                                    <label asp-for="CODIGO" class="col-md-2 control-label"></label>
+                                    <div class="col-md-10">
+                                        <input asp-for="CODIGO" class="form-control" />
+                                        <span asp-validation-for="CODIGO" class="text-danger" />
+                                    </div>
+                                </div>
+
+                                <div class="row clearfix">
+
+
+
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="FECHA_SOLICITUD_CLIENTE" class="col-md-12 control-label"></label>
+                                        @*@{
+                                            string fecha_cliente = ViewBag.fechaCliente;
+
+                                            if (fecha_cliente.Equals("0001-01-01"))
+                                            {
+                                                fecha_cliente = DateTime.Today.ToString("yyyy-MM-dd HH:mm");
+                                            }
+                                            }*@
+
+                                        <input type="date" asp-for="FECHA_SOLICITUD_CLIENTE" name="fecha_cliente" id="fechaDocumentacion" onchange="diasLab();"  class="form-control" required />
+                                        <span asp-validation-for="FECHA_SOLICITUD_CLIENTE" class="text-danger" />
+                                        </div>
+
+                                    <div class="col-md-12 col-sm-12">
+
+                                        <label id="lblFechaOk" style="color:forestgreen; display:none;"><strong>La fecha esta dentro de los 4 dias habiles</strong></label>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <label id="lblFechaError" style="color:red; display:none;"><strong>La fecha excede los 4 dias habiles</strong></label>
+                                    </div>
+                                </div>
+                               
+
+                                <div class="col-md-6 col-sm-12">
+                                    <div class="form-group">
+                                        <label asp-for="FECHA_RECEPCION_CYBER" class="col-md-12 control-label"></label>
+                                        @*@{
+                                            string fecha_cyber = ViewBag.fechaCyber;
+
+                                            if (fecha_cyber.Equals("0001-01-01"))
+                                            {
+                                                fecha_cyber = DateTime.Today.ToString("yyyy-MM-dd HH:mm");
+                                            }
+                                        }*@
+
+                                        <input type="date" asp-for="FECHA_RECEPCION_CYBER" name="fecha_cyber" id="fecha_cyber" onchange="fechaCyber();" required class="form-control" />
+                                        <span asp-validation-for="FECHA_RECEPCION_CYBER" class="text-danger" />
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="row clearfix">
+
+                                <div class="col-lg-4 col-md-6 col-sm-12">
+                                    <div class="btn-group bootstrap-select form-control show-tick">
+                                        <label asp-for="AFP" class="col-md-12 control-label"></label>                                      
+                                        <select asp-for="AFP" asp-items="@(new SelectList(ViewBag.AFPS,"CODIGO","AFP"))" title="-- AFP --" class="form-control show-tick" tabindex="-98"></select>
+                                        <span asp-validation-for="AFP" class="text-danger" />
+                                    </div>
+                                </div>
+
+
+                                    <div class="col-lg-4 col-md-3 col-sm-12">
+                                        <div class="btn-group bootstrap-select form-control show-tick">
+
+                                            <label class="col-md-12 control-label">Tipo Doc</label>
+
+                                            <select asp-for="TIPO_DOCUMENTO" id="tipoDocumento" title="-- TIPO DOC --" onchange="longDoc();" class="form-control show-tick" tabindex="-98" required>
+                                                <option value="01">L.E / DNI</option>
+                                                <option value="04">CARNET EXT.</option>
+                                            </select>
+                                            <span asp-validation-for="TIPO_DOCUMENTO" class="text-danger" />
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <label class="col-md-12 control-label">Nro Doc</label>
+                                        <input type="text" asp-for="NUMERO_DOCUMENTO" class="form-control" id="dni" onchange="dniDuplicado();" placeholder="Numero documento" required />
+                                        <span asp-validation-for="NUMERO_DOCUMENTO" class="text-danger" />
+                                        
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+
+                                    </div>
+
+                                    <div class="col-md-4 col-sm-12">
+
+                                    </div>
+                                    <div class="col-md-4 col-sm-12">
+                                        <label id="lblExiste" style="color:red; display:none;"><strong>Este DNI ya existe</strong></label>
+                                        <label id="lblInexiste" style="color:forestgreen; display:none;"><strong>Este DNI esta disponible</strong></label>
+                                    </div>
+                               
+                            
+                            </div>
+
+                                <br />
+
+
+
+                                <div class="row clearfix">
+
+                                    <div class="col-md-6 col-sm-12">
+                                        <label class="col-md-12 control-label">Nombres</label>
+                                        <input asp-for="NOMBRES" class="form-control" placeholder="Nombres" required />
+                                        <span asp-validation-for="NOMBRES" class="text-danger" />
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-12">
+
+                                        <label class="col-md-12 control-label">Ap. Paterno</label>
+                                        <input asp-for="APELLIDO_PATERNO" class="form-control" placeholder="Apellido Paterno" required />
+                                        <span asp-validation-for="APELLIDO_PATERNO" class="text-danger" />
+
+                                    </div>
+
+                                    <div class="col-md-3 col-sm-12">
+                                        <label class="col-md-12 control-label">Ap. Materno</label>
+                                        <input asp-for="APELLIDO_MATERNO" class="form-control" placeholder="Apellido Materno" required />
+                                        <span asp-validation-for="APELLIDO_MATERNO" class="text-danger" />
+                                    </div>
+
+                                </div>
+
+                                <br />
+                                <div class="row clearfix">
+
+                                    <div class="col-md-4 col-sm-12">
+                                        <label class="col-md-12 control-label">E-mail</label>
+                                        <input asp-for="EMAIL" class="form-control" id="email" onchange="validate();" placeholder="E-MAIL" />
+                                        <span asp-validation-for="EMAIL" class="text-danger" />
+
+                                        <div class="col-md-12 col-sm-12">
+
+                                            <label id="lblEmailOK" style="color:forestgreen; display:none;"><strong>Direccion de Correo electronico valida</strong></label>
+                                        </div>
+                                        <div class="col-md-12 col-sm-12">
+                                            <label id="lblEmailERROR" style="color:red; display:none;"><strong>Direccion de Correo electronico invalida</strong></label>
+                                        </div>
+                                        
+
+
+                                    </div>
+
+                                    @*onkeyup='maskinput(event)'*@
+
+
+
+                                    <div class="col-md-3 col-sm-12">
+                                        <label class="col-md-12 control-label"> Credito</label>
+                                        <input type="text" asp-for="NUM_CREDITO" id="numCredito" onchange="concatena();" maxlength="18" class="form-control" placeholder="Numero de Credito" required />
+                                        <span asp-validation-for="NUM_CREDITO" class="text-danger" />
+
+                                    </div>
+
+
+
+
+                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="btn-group bootstrap-select form-control show-tick">
+                                            <label class="col-md-12 control-label">Destino</label>
+                                            <select asp-for="DESTINO_CREDITO" title="-- DESTINO_CREDITO --" class="form-control show-tick" tabindex="-98">
+                                                <option value="Amortizacion">Amortizacion</option>
+                                                <option value="Cuota Inicial">Cuota Inicial</option>
+                                            </select>
+                                            <span asp-validation-for="DESTINO_CREDITO" class="text-danger" />
+                                        </div>
+                                    </div>
+
+
+
+
+                                </div>
+
+                                <br />
+
+                                <div class="row clearfix">
+
+                                    <div class="col-lg-4 col-md-6 col-sm-12">
+                                        <div class="btn-group bootstrap-select form-control show-tick">
+                                            <label class="col-md-12 control-label">Modalidad</label>
+                                            
+                                            <select asp-for="MODALIDAD" asp-items="@(new SelectList(ViewBag.MODALIDADES,"CODIGO", "MODALIDAD"))" title="-- MODALIDAD --" class="form-control show-tick" tabindex="-98" required></select>
+                                            <span asp-validation-for="MODALIDAD" class="text-danger" />
+                                        </div>
+                                    </div>
+
+                                                                      
+
+
+                                    <div class="col-lg-4 col-md-6 col-sm-12">
+                                       
+                                        <label class="col-md-12 control-label"> Num. Territorio elegido</label>
+                                            <input id="inPROVINCIA" asp-for="PROVINCIA" class="form-control" readonly  />
+                                            <span asp-validation-for="PROVINCIA" class="text-danger" />
+                                            @*<input id="inPROVINCIAname" class="form-control"  readonly/>*@
+                                                                                   
+                                           @* <select asp-for="PROVINCIA" asp-items="@(new SelectList(ViewBag.TERRITORIOS,"COD_TERRITORIO","TERRITORIO"))" title="-- TERRITORIO --" class="form-control show-tick" tabindex="-98"></select>*@
+                                    
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-6 col-sm-12">
+                                       
+                                        <label class="col-md-12 control-label"> Num. Oficina elegida</label>
+                                            <input  id="inNUM_OFICINA" asp-for="NUM_OFICINA" class="form-control" readonly  />
+                                            <span asp-validation-for="NUM_OFICINA" class="text-danger" />
+                                        @*<input id="inNUM_OFICINAname" class="form-control" readonly />*@
+                                          @*  <select asp-for="NUM_OFICINA" asp-items="@(new SelectList(ViewBag.OFICINAS,"COD_OFIC", "OFICINA"))" title="-- OFICINA --" class="form-control show-tick" tabindex="-98"></select>*@
+                                    
+                                    </div>
+
+
+                                </div>
+
+                                <br />
+                                <div class="row clearfix">
+
+                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="btn-group bootstrap-select form-control show-tick">
+                                            <label class="col-md-12 control-label">Documentacion Completa?</label>
+                                            <select title="-- Elija --" class="form-control show-tick" tabindex="-98" name="ComboFechaDoc" id="ComboFechaDoc" onchange="DocComp();">
+                                                <option value="Si">Si</option>
+                                                <option value="No">No</option>
+                                            </select>
+                                        </div>
+                                    </div>         
+                                     
+                                    <div class="col-lg-4 col-sm-12" style="display:none;"  id="DOCFECHACOMPLETA">
+                                        <label class="col-md-12 control-label">Fecha Doc. Completa</label>
+                                        <input type="datetime-local"  asp-for="FECHA_DOCUMENTACIONC" id="fecDocCompleta" onchange="soloHastaHoy();" value="0001-01-01"  class="form-control"  />
+                                        @*<span asp-validation-for="FECHA_DOCUMENTACIONC" class="text-danger" />*@        
+                                    </div>
+                                    <div class="col-lg-4 col-sm-12" style="display:none;" id="DOCCOMPLETA">
+                                       
+                                        @*<span asp-validation-for="FECHA_DOCUMENTACIONC" class="text-danger" />*@
+                                    </div>
+                                </div>
+
+
+
+
+                            </div>
+
+                        </div>
+
+
+                    </div>
+              </div>
+
+         
+
+            <div class="col-md-4">
+                <div class="col-md-12">
+                    <div class="card">
+
+                        <div class="header">
+                            <h2><strong>Territorio / Oficina</strong>  <small></small></h2>
+
+                        </div>
+
+                        <div class="body">
+                         
+                                <div class="table-responsive" style="height:230px">
+                                    @{var cont = 0;}
+                                    <table class="table table-bordered" id="example">
+                                        <thead>
+                                            <tr>
+                                                <th>Codigo</th>
+                                                <th>Territorio</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="vTerritorio">
+                                            @foreach (var item in @ViewBag.TERRITORIOS)
+                                            {
+                                                cont = cont + 1;
+                                                var vTer = "Ter-" + cont;
+                                                var vCod_ter = @item.COD_TERRITORIO;
+                                                var vNomb_ter = @item.TERRITORIO;
+                                                <tr id="@vTer" onclick="Fun_Terri('@vTer', '@vCod_ter','@vNomb_ter' );" style="cursor:pointer" >
+                                                    <td>@item.COD_TERRITORIO</td>
+                                                    <td>@item.TERRITORIO</td>
+                                                </tr>
+                                        }
+                                        </tbody>
+
+
+                                    </table>
+
+                                </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+                <div class="col-md-12">
+                    <div class="card">
+
+                 
+
+                        <div class="body">
+                           
+                                <div class="table-responsive" style="height:150px">
+                                    @{var cont2 = 0;}
+                                    <table class="table table-bordered"id="tbOficina"  >
+                                        <thead>
+                                            <tr>
+                                                <th>Codigo</th>
+                                                <th>Oficina</th>
+                                            </tr>
+                                        </thead>
+                                        @*<tbody id="tbOficina2" class="vOficna">
+
+                              
+
+                                            @foreach (var item in @ViewBag.OFICINAS)
+                                            {
+                                                cont2 = cont2 + 1;
+                                                var vOfi = "Ofi-" + cont;
+                                                var vCod_Ofi = @item.COD_OFIC;
+                                                <tr id="@vOfi" onclick="Fun_Ofi('@vOfi', '@vCod_Ofi' );">
+                                                    <td>@item.COD_OFIC</td>
+                                                    <td>@item.OFICINA</td>
+                                                </tr>
+                                            }
+                                        </tbody>*@
+
+
+                                    </table>
+
+                                </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+        <div class="card">
+
+            <div class="header">
+                <h2><strong>Validar</strong> Datos <small></small></h2>
+            </div>
+
+            <div class="body">
+                <div class="form-horizontal">
+
+
+                    <div class="row clearfix">
+
+
+                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                    <div class="btn-group bootstrap-select form-control show-tick">
+                                        <label class="col-md-12 control-label">Estado Cta AFP</label>
+                                        <select asp-for="ESTADO_CTA_AFP" title="-- ESTADO CTA AFP --" class="form-control show-tick" tabindex="-98">
+                                            <option value="Si">Si</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>               
+
+                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                    <div class="btn-group bootstrap-select form-control show-tick">
+                                        <label class="col-md-12 control-label">Dni</label>
+                                        <select asp-for="DNI" title="-- DNI --" class="form-control show-tick" tabindex="-98">
+                                            <option value="Si">Si</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>  
+                                                 
+                             
+
+                    </div>
+
+                    <br />
+
+                    <div class="row clearfix">
+
+
+
+
+                                    <div class="col-lg-3 col-md-3 col-sm-12">
+                                        <div class="btn-group bootstrap-select form-control show-tick">
+                                            <label class="col-md-12 control-label">Consulta de Indices</label>
+                                            <select asp-for="CONSULTA_INDICES" title="-- CONSULTA INDICES --" class="form-control show-tick" tabindex="-98">
+                                                <option value="Si">Si</option>
+                                                <option value="No">No</option>
+                                            </select>
+                                        </div>
+                                    </div>  
+
+                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                    <div class="btn-group bootstrap-select form-control show-tick">
+                                        <label class="col-md-12 control-label">Infocorp</label>
+                                        <select asp-for="INFORCORP" title="-- INFORCORP --" class="form-control show-tick" tabindex="-98">
+                                            <option value="Si">Si</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>  
+                               
+
+                                <div class="col-lg-3 col-md-3 col-sm-12">
+                                    <div class="btn-group bootstrap-select form-control show-tick">
+                                        <label class="col-md-12 control-label">Solicitud Completa</label>
+                                        <select asp-for="SOLICITUD_COMPLETA" title="-- SOLICITUD COMPLETA --" class="form-control show-tick" tabindex="-98">
+                                            <option value="Si">Si</option>
+                                            <option value="No">No</option>
+                                        </select>
+                                    </div>
+                                </div>                              
+                                     
+                                
+                                
+                                <div class="col-md-3 col-sm-12" hidden>
+                                    <label class="col-md-12 control-label">Fecha de Envio Improcedencia</label>
+                                    <input type="date" asp-for="FECHA_OBSERVACION" class="form-control" />
+                                    @*<span asp-validation-for="FECHA_OBSERVACION" class="text-danger" />*@
+
+                                </div>
+
+                    </div>
+
+
+
+
+                            <br />
+                    <div class="row clearfix">                               
+                                   
+                                    <div class="col-md-3 col-sm-12">
+                                        <label class="col-md-12 control-label">Gestor</label>
+                                        <input asp-for="GESTOR" class="form-control" placeholder="Gestor" />
+                                        <span asp-validation-for="GESTOR" class="text-danger" />
+                                    </div>
+                               
+                              
+                                 
+                                    <div class="col-md-6 col-sm-12">
+                                        <label class="col-md-12 control-label">Observaciones Gestor</label>
+                                        <input asp-for="OBSERVACIONES_GESTOR" class="form-control" placeholder="Observaciones Gestor/Abogado" />
+                                        <span asp-validation-for="OBSERVACIONES_GESTOR" class="text-danger" />
+                                    </div>
+                               
+
+                    </div>
+                   
+                   @if (ViewBag.MsjExito == "Se Grabo correctamente")
+                   {
+                    <div id="solicitudOK" class="sweet-alert hideSweetAlert visible" data-custom-class="" data-has-cancel-button="false" data-has-confirm-button="true" data-allow-outside-click="false" data-has-done-function="false" data-animation="pop" data-timer="null" margin-top: -149px;">
+
+                        <div class="sa-icon sa-success animate" style="display: block;">
+                            <span class="sa-line sa-tip animateSuccessTip"></span>
+                            <span class="sa-line sa-long animateSuccessLong"></span>
+
+                            <div class="sa-placeholder"></div>
+                            <div class="sa-fix"></div>
+                        </div>
+                        <div class="sa-icon sa-custom" style="display: none;">
+                        </div>
+                        <h2>Se Guardo Correctamente !</h2>
+                        <div class="sa-button-container">
+                        </div>
+                    </div>
+
+                   }
+                   else
+                   {
+                    <div id="solicitudERROR" class="sweet-alert hideSweetAlert visible" data-custom-class="" data-has-cancel-button="false" data-has-confirm-button="true" data-allow-outside-click="false" data-has-done-function="false" data-animation="pop" data-timer="null" margin-top: -149px;">
+
+                        <div class="sa-icon sa-error animate" style="display: block;">
+                            <span class="sa-line sa-tip animateSuccessTip"></span>
+                            <span class="sa-line sa-long animateSuccessLong"></span>
+
+                            <div class="sa-placeholder"></div>
+                            <div class="sa-fix"></div>
+                        </div><div class="sa-icon sa-custom" style="display: none;"></div><h2>No se guardo :-(</h2>
+
+                        <div class="sa-button-container">
+                        </div>
+                    </div>
+                   }
+
+
+
+
+
+
+                    <div class="row">
+                        <div class="form-group" hidden>
+                            <label asp-for="MOTIVO_RECHAZO" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="MOTIVO_RECHAZO" class="form-control" />
+                                <span asp-validation-for="MOTIVO_RECHAZO" class="text-danger" />
+                            </div>
+                        </div>
+
+                        <div class="form-group" hidden>
+                            <label asp-for="NUM_PRESTAMO" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="NUM_PRESTAMO" class="form-control" />
+                                <span asp-validation-for="NUM_PRESTAMO" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="FECHA_GESTION" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="FECHA_GESTION" class="form-control" />
+                                <span asp-validation-for="FECHA_GESTION" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="FECHA_ASIGNACION" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="FECHA_ASIGNACION" class="form-control" />
+                                <span asp-validation-for="FECHA_ASIGNACION" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="FECHA_DICTAMEN" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="FECHA_DICTAMEN" class="form-control" />
+                                <span asp-validation-for="FECHA_DICTAMEN" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="AFP_125" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="AFP_125" class="form-control" />
+                                <span asp-validation-for="AFP_125" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="MONEDA" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="MONEDA" class="form-control" />
+                                <span asp-validation-for="MONEDA" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="VALOR_INMUEBLE" class="col-md-2 control-label"></label>
+                            <div class="col-md-10" hidden>
+                                <input asp-for="VALOR_INMUEBLE" class="form-control" />
+                                <span asp-validation-for="VALOR_INMUEBLE" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="MONEDA_INMUEBLE" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="MONEDA_INMUEBLE" class="form-control" />
+                                <span asp-validation-for="MONEDA_INMUEBLE" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="DICTAMEN" class="col-md-2 control-label"></label>
+                            <div class="col-md-10" hidden>
+                                <input asp-for="DICTAMEN" class="form-control" />
+                                <span asp-validation-for="DICTAMEN" class="text-danger" />
+                            </div>
+                        </div>
+
+                        <div class="form-group" hidden>
+                            <label asp-for="LUGAR_PRECONFORMIDAD" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="LUGAR_PRECONFORMIDAD" class="form-control" />
+                                <span asp-validation-for="LUGAR_PRECONFORMIDAD" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="GESTOR_CONTACTO" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="GESTOR_CONTACTO" class="form-control" />
+                                <span asp-validation-for="GESTOR_CONTACTO" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="FECHA_ENVIO_AFP" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="FECHA_ENVIO_AFP" class="form-control" />
+                                <span asp-validation-for="FECHA_ENVIO_AFP" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="ESTADO_SOLICITUD" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="ESTADO_SOLICITUD" class="form-control" />
+                                <span asp-validation-for="ESTADO_SOLICITUD" class="text-danger" />
+                            </div>
+                        </div>
+                        <div class="form-group" hidden>
+                            <label asp-for="OBSER" class="col-md-2 control-label"></label>
+                            <div class="col-md-10">
+                                <input asp-for="OBSER" class="form-control" />
+                                <span asp-validation-for="OBSER" class="text-danger" />
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Grabar" class="btn btn-info" style="float:right;" />
+                </div>
+            </div>
+
+
+
+        </div>
+
+
+
+    </div>
+
+
+</form>
+
+<div>
+    <a href="javascript:history.back()"> Volver a la lista</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

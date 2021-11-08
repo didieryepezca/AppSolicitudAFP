@@ -1,0 +1,134 @@
+@model ADA.Models.TB_USUARIO
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Registrar";
+}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta name="description" content="Responsive Bootstrap 4 and web Application ui kit.">
+
+    <title>:: ADA - Nuevo Usuario ::</title>
+    <!-- Favicon-->
+
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="~/assets/plugins/bootstrap-select/css/bootstrap-select.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/assets/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/plugins/jvectormap/jquery-jvectormap-2.0.3.min.css" />
+    <link rel="stylesheet" href="~/assets/plugins/morrisjs/morris.min.css" />
+
+    <!-- Custom Css -->
+    <link rel="stylesheet" href="~/assets/plugins/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/assets/css/main.css">
+    <link rel="stylesheet" href="~/assets/css/authentication.css">
+    <link rel="stylesheet" href="~/assets/css/color_skins.css">
+</head>
+
+<body class="s-profile">
+    <div class="content-center">
+
+
+
+        <form asp-action="Registrar" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+            <h4>Crear una cuenta nueva...</h4>
+            <hr />
+
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="cod_usu" class="col-md-10 control-label"></label>
+                <div class="col-md-4">
+                    <input asp-for="cod_usu" class="form-control" />
+                    <span asp-validation-for="cod_usu" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="pas_usu" class="col-md-10 control-label"></label>
+                <div class="col-md-4">
+                    <input asp-for="pas_usu" type="password" class="form-control" />
+                    <span asp-validation-for="pas_usu" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label asp-for="nom_usu" class="col-md-10 control-label"></label>
+                <div class="col-md-4">
+                    <input asp-for="nom_usu" class="form-control" />
+                    <span asp-validation-for="nom_usu" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="tip_usu" class="col-md-10 control-label"></label>
+                <div class="col-md-4">
+                    <input asp-for="tip_usu" value="ADMIN" class="form-control" readonly />
+                    <span asp-validation-for="tip_usu" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-4 col-sm-12">
+                <div class="btn-group bootstrap-select form-control show-tick">
+                    <div class="dropdown-menu" role="combobox" style="max-height: 295px; overflow: hidden; min-height: 3px;">
+                        <ul class="dropdown-menu inner" role="listbox" aria-expanded="false" style="max-height: 295px; overflow-y: auto; min-height: 2px;">
+                            <li data-original-index="0" class="selected">
+                                <a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="true"><span class="glyphicon glyphicon-ok check-mark"></span></a>
+                            </li>
+                            <li data-original-index="1"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BCA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+                            <li data-original-index="2"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MCA</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+                            <li data-original-index="3"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">BCom</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+                            <li data-original-index="4"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">MCom</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li>
+                        </ul>
+                    </div>
+                    <label asp-for="empresa" class="col-md-10 control-label"></label>
+                    <select asp-for="empresa" title="-- EMPRESA --" class="form-control show-tick" tabindex="-98" required>
+                        <option value="CYBERGESTION">CYBERGESTION</option>
+                        <option value="OPPLUS">OPPLUS</option>
+                    </select>
+                </div>
+            </div>
+            <br />
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <button type="submit" class="btn btn-success" style="float:left;">REGISTRAR</button>
+                </div>
+            </div>
+
+            <br />
+            <br />
+            <br />
+        </form>
+    </div>
+</body>
+
+
+<script src="~/assets/bundles/libscripts.bundle.js"></script>
+<script src="~/assets/bundles/vendorscripts.bundle.js"></script> <!-- Lib Scripts Plugin Js -->
+
+
+
+<script src="~/assets/bundles/morrisscripts.bundle.js"></script><!-- Morris Plugin Js -->
+<script src="~/assets/bundles/jvectormap.bundle.js"></script> <!-- JVectorMap Plugin Js -->
+<script src="~/assets/plugins/jvectormap/jquery-jvectormap-us-aea-en.js"></script><!-- USA Map Js -->
+<script src="~/assets/bundles/knob.bundle.js"></script> <!-- Jquery Knob, Count To, Sparkline Js -->
+
+<script src="~/assets/bundles/datatablescripts.bundle.js"></script>
+
+<script src="~/assets/bundles/mainscripts.bundle.js"></script>
+<script src="~/assets/js/pages/index.js"></script>
+<script src="~/assets/js/pages/ui/dialogs.js"></script>
+<script src="~/assets/plugins/dropzone/dropzone.js"></script>
+<script>
+                $(".navbar-toggler").on('click', function () {
+                    $("html").toggleClass("nav-open");
+                });
+                //=============================================================================
+                $('.form-control').on("focus", function () {
+                    $(this).parent('.input-group').addClass("input-group-focus");
+                }).on("blur", function () {
+                    $(this).parent(".input-group").removeClass("input-group-focus");
+                });
+</script>

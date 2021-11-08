@@ -1,0 +1,30 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using ADA.Models
+
+@*@inject SignInManager<TB_USUARIO> SignInManager
+@inject UserManager<TB_USUARIO> UserManager*@
+
+@*@if (SignInManager.IsSignedIn(User))
+{*@<div class="info">
+        <form asp-area="" asp-controller="Logeo" asp-action="Entrar" method="get" id="logoutForm" class="navbar-right">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                   <h5><a asp-area="" asp-controller="Home" asp-action="UserUpdate" asp-route-cod="@ViewBag.codigo" title="Administrar"><strong>@ViewBag.vUsuario</strong></a></h5> 
+                    @*<a asp-area="" asp-controller="Manage" asp-action="Index" title="Manage">Hola! @UserManager.GetUserName(User)!</a>*@
+                </li>
+                <li style="font-size:initial; ">
+                    <button type="submit" class="btn btn-link navbar-btn navbar-link" style="color:red">Salir</button>
+                </li>
+            </ul>
+        </form>
+    </div>
+@*}
+else
+{*@
+    @*<div class="info">
+        <ul class="list-inline list-unstyled">
+            <li><a asp-area="" asp-controller="Account" asp-action="Register">Registrar</a></li>
+            <li><a asp-area="" asp-controller="Account" asp-action="Login">Log in</a></li>
+        </ul>
+    </div>*@
+@*}*@
